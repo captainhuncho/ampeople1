@@ -30,6 +30,7 @@ export default function AMPeopleApp() {
   const [nlSuccess, setNlSuccess] = useState(false)
   const [cardFlipped, setCardFlipped] = useState(false)
   const qrCanvasRef = useRef<HTMLCanvasElement>(null)
+  const memberInputRef = useRef<HTMLInputElement>(null)
 
   const tierData = TIER_DISPLAY[memberTier]
 
