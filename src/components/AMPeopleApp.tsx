@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { MEMBER, TIER_LABELS, TIER_ORDER, TIER_DISPLAY, EVENTS, type TierKey } from '@/data/memberData'
 
 // ─── Types ───────────────────────────────────────────────────
@@ -29,9 +29,7 @@ export default function AMPeopleApp() {
   const [nlFirst, setNlFirst] = useState('')
   const [nlSuccess, setNlSuccess] = useState(false)
   const [cardFlipped, setCardFlipped] = useState(false)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
   const qrCanvasRef = useRef<HTMLCanvasElement>(null)
-  const memberInputRef = useRef<HTMLInputElement>(null)
 
   const tierData = TIER_DISPLAY[memberTier]
 
@@ -40,45 +38,7 @@ export default function AMPeopleApp() {
     document.body.setAttribute('data-tier', memberTier)
   }, [memberTier])
 
-  // ── Landing canvas animation ────────────────────────────────
-  useEffect(() => {
-    if (screen !== 'landing') return
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
 
-    let animId: number
-    let t = 0
-
-    const resize = () => {
-      canvas.width = canvas.offsetWidth || window.innerWidth
-      canvas.height = canvas.offsetHeight || window.innerHeight
-    }
-    resize()
-    window.addEventListener('resize', resize)
-
-    const animate = () => {
-      t++
-      animId = requestAnimationFrame(animate)
-    }
-    animate()
-
-    // Auto-show newsletter after 8s
-    const nlTimer = setTimeout(() => {
-      try {
-        if (!localStorage.getItem('nl_subscribed') && !localStorage.getItem('nl_dismissed')) {
-          setNlOpen(true)
-        }
-      } catch {}
-    }, 8000)
-
-    return () => {
-      cancelAnimationFrame(animId)
-      window.removeEventListener('resize', resize)
-      clearTimeout(nlTimer)
-    }
-  }, [screen])
 
   // ── QR code draw ────────────────────────────────────────────
   useEffect(() => {
@@ -129,7 +89,6 @@ export default function AMPeopleApp() {
     const num = memberInput.replace(/\D/g, '')
     if (num.length < 4) return
     setLoginView('pin')
-    setTimeout(() => document.getElementById('pin-display')?.focus(), 100)
   }
 
   const handlePin = (digit: string) => {
